@@ -1,0 +1,65 @@
+/**
+ * 这里不是 apply plugin: 'com.android.application' 了，很多原来的配置大部分都有 = 号了
+ */
+apply plugin: 'com.android.model.application'
+/**
+ * 这里不再是android开始了而是model
+ */
+model {
+    android {
+        compileSdkVersion 23
+        buildToolsVersion "23.0.3"
+
+        defaultConfig {
+            applicationId "com.windystory.hellojni"
+            minSdkVersion.apiLevel = 19 //最低版本的SDK设置
+            targetSdkVersion.apiLevel = 23  //编译SDK设置
+            versionCode = 1   //注意加 = 号
+            versionName = "1.0"
+        }
+        /*
+         * 设置NDK编译moduleName
+         */
+        ndk {
+            moduleName = "openssl-jni"
+            platformVersion = 19
+            ldFlags.addAll(["-lcrypto", "-lssl","-llog","-lstdc++","-lz"])
+
+//            ldFlags.add("-lcrypto")
+
+            abiFilters.add("armeabi-v7a")
+        }
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles.add(file('proguard-rules.txt'))//这里不是原来的那个了
+            }
+        }
+
+        productFlavors {
+            create("arm") {
+                ndk.abiFilters.add("armeabi")
+            }
+            create("arm7") {
+                ndk.abiFilters.add("armeabi-v7a")
+            }
+            create("arm8") {
+                ndk.abiFilters.add("arm64-v8a")
+            }
+            create("x86") {
+                ndk.abiFilters.add("x86")
+            }
+            create("x86-64") {
+                ndk.abiFilters.add("x86_64")
+            }
+            create("mips") {
+                ndk.abiFilters.add("mips")
+            }
+            create("mips-64") {
+                ndk.abiFilters.add("mips64")
+            }
+            // 包括所有的CPU架构
+            create("all")
+        }
+    }
+}
